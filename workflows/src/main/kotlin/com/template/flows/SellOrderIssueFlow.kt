@@ -12,10 +12,8 @@ import net.corda.core.utilities.ProgressTracker
 @StartableByRPC
 class SellOrderIssueFlow(val sellAssetName: String,
                          val sellAssetQty: Int,
-                         val priceForSellAsset: Int,
                          val buyAssetName: String,
-                         val buyAssetQty: Int,
-                         val buyAssetPrice: Int) : FlowLogic<Unit>() {
+                         val buyAssetQty: Int) : FlowLogic<Unit>() {
 
     /** The progress tracker provides checkpoints indicating the progress of the flow to observers. */
     override val progressTracker = ProgressTracker()

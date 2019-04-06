@@ -39,7 +39,10 @@ class AssetContract : Contract {
                     val input = inputs.single()
                     requireThat {
                         "the transaction is signed by the owner of the CP" using (input.owner.owningKey in command.signers)
-                        "the state is propagated" using (outputs.size == 1)
+                        "outputs should not be empty" using (outputs.size > 0)
+                        "Outputs sum should equal to inputs" using
+                                (inputs.map { input -> input.assetQty }.sum() ==
+                                 outputs.map { ouput -> ouput.assetQty }.sum())
                     }
                 }
                 is Commands.Issue -> {
