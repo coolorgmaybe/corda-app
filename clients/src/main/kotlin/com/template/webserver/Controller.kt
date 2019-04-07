@@ -72,7 +72,7 @@ class Controller(rpc: NodeRPCConnection) {
         return """{ "":"" } """
     }
 
-    @GetMapping(value = "/assetIssueFlowWood", produces = arrayOf("text/plain"))
+    @GetMapping(value = "/assetIssueFlowBTC", produces = arrayOf("text/plain"))
     private fun assetIssueFlowWood(): String {
         val x500Name = CordaX500Name.parse("O=PartyC,L=Moscow,C=US")
         val party = proxy.wellKnownPartyFromX500Name(x500Name)
@@ -80,7 +80,7 @@ class Controller(rpc: NodeRPCConnection) {
         return """{ "":"" } """
     }
 
-    @GetMapping(value = "/assetIssueFlowStone", produces = arrayOf("text/plain"))
+    @GetMapping(value = "/assetIssueFlowDollar", produces = arrayOf("text/plain"))
     private fun assetIssueFlowStone(): String {
         val x500Name = CordaX500Name.parse("O=PartyC,L=Moscow,C=US")
         val party = proxy.wellKnownPartyFromX500Name(x500Name)
@@ -124,7 +124,7 @@ class Controller(rpc: NodeRPCConnection) {
         return "partyMatchFlow"
     }
 
-    @GetMapping(value = "/sellOrderIssueFlowWood", produces = arrayOf("text/plain"))
+    @GetMapping(value = "/sellOrderIssueFlowBTC", produces = arrayOf("text/plain"))
     private fun sellOrderIssueFlowWood(): String {
         val x500Name = CordaX500Name.parse("O=PartyC,L=Moscow,C=US")
         val party = proxy.wellKnownPartyFromX500Name(x500Name)
@@ -132,11 +132,11 @@ class Controller(rpc: NodeRPCConnection) {
         return """{ "":"" } """
     }
 
-    @GetMapping(value = "/sellOrderIssueFlowStone", produces = arrayOf("text/plain"))
+    @GetMapping(value = "/buyOrderIssueFlowDollar", produces = arrayOf("text/plain"))
     private fun sellOrderIssueFlowStone(): String {
         val x500Name = CordaX500Name.parse("O=PartyC,L=Moscow,C=US")
         val party = proxy.wellKnownPartyFromX500Name(x500Name)
-        proxy.startFlowDynamic(SellOrderIssueFlow::class.java, "Dollar", 10, "BTC", 100, party)
+        proxy.startFlowDynamic(BuyOrderIssueFlow::class.java, "Dollar", 10, "BTC", 100, party)
         return """{ "":"" } """
     }
 
