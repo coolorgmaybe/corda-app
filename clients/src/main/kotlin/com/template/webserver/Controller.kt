@@ -56,6 +56,6 @@ class Controller(rpc: NodeRPCConnection) {
     @GetMapping(value = "/states", produces = arrayOf("text/plain"))
     private fun states() = proxy.vaultQueryBy<AssetState>().states.toString()
 
-    @GetMapping(value = "/getQuery", produces = arrayOf("text/plain"))
-    private fun queries() = proxy.startFlowDynamic(AssetIssueFlow.class,)
+//    @GetMapping(value = "/getQuery", produces = arrayOf("text/plain"))
+//    private fun queries() = proxy.startFlowDynamic(AssetIssueFlow.class,)
 }

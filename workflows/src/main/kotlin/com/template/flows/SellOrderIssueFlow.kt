@@ -5,6 +5,7 @@ import com.template.contracts.OrderContract
 import com.template.states.SellOrderState
 import net.corda.core.contracts.Command
 import net.corda.core.flows.*
+import net.corda.core.identity.Party
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.ProgressTracker
 
@@ -13,7 +14,8 @@ import net.corda.core.utilities.ProgressTracker
 class SellOrderIssueFlow(val sellAssetName: String,
                          val sellAssetQty: Int,
                          val buyAssetName: String,
-                         val buyAssetQty: Int) : FlowLogic<Unit>() {
+                         val buyAssetQty: Int,
+                         val matcherParty: Party) : FlowLogic<Unit>() {
 
     /** The progress tracker provides checkpoints indicating the progress of the flow to observers. */
     override val progressTracker = ProgressTracker()
@@ -22,6 +24,7 @@ class SellOrderIssueFlow(val sellAssetName: String,
     override fun call() {
 
         val notary = serviceHub.networkMapCache.notaryIdentities[0]
+        val initFlow = initiateFlow(matcherParty)
         val outputState = SellOrderState(
                 ourIdentity,
                 sellAssetName,
@@ -33,6 +36,7 @@ class SellOrderIssueFlow(val sellAssetName: String,
                 .addOutputState(outputState)
                 .addCommand(command)
         val signedTx = serviceHub.signInitialTransaction(txBuilder)
+        subFlow(SendTransactionFlow(initFlow, signedTx))
         subFlow(FinalityFlow(signedTx, emptySet<FlowSession>()))
     }
 }

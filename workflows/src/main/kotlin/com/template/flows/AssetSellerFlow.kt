@@ -2,6 +2,7 @@ package com.template.flows
 
 import co.paralleluniverse.fibers.Suspendable
 import com.template.states.AssetState
+import com.template.states.BuyOrderState
 import com.template.states.SellOrderState
 import net.corda.confidential.IdentitySyncFlow
 import net.corda.core.flows.*
@@ -32,17 +33,21 @@ class AssetSellerFlow(val assetName: String,
 
             val possibleStateToBuy = subFlow(ReceiveStateAndRefFlow<AssetState>(initFlow)).single()
 
+            val possibleBuyOrder = subFlow(ReceiveStateAndRefFlow<BuyOrderState>(initFlow)).single()
+
             logger.info("Get state to buy: $possibleStateToBuy")
 
             val newOutput1 =
                     possibleAsset.state.data.withNewOwner(possibleStateToBuy.state.data.owner)
             val newOutput2 =
-                    possibleStateToBuy.state.data.withNewOwner(ourIdentity)
+                    possibleStateToBuy.state.data.withNewOwner(possibleAsset.state.data.owner)
 
             logger.info("Make new outputs")
 
             val ptx = TransactionBuilder(notary)
                     .addInputState(possibleStateToBuy)
+                    .addInputState(possibleBuyOrder)
+                    .addInputState(possibleSellOrder)
                     .addInputState(possibleAsset)
                     .addCommand(newOutput1.command, ourIdentity.owningKey)
                     .addOutputState(newOutput1.ownableState, possibleStateToBuy.state.contract, possibleStateToBuy.state.notary)
