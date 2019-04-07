@@ -32,7 +32,11 @@ class AssetContract : Contract {
 
         val groups = tx.groupStates(OwnableState::owner)
 
-        val commands = tx.commands
+        val commands =
+                if ((tx.inputs.size == 4) && (tx.outputs.size == 2)) {
+                    tx.commands + tx.commands
+                }
+                else tx.commands
 
         logger.info("Groups: $groups")
 
