@@ -76,7 +76,7 @@ class Controller(rpc: NodeRPCConnection) {
     private fun assetIssueFlowWood(): String {
         val x500Name = CordaX500Name.parse("O=PartyC,L=Moscow,C=US")
         val party = proxy.wellKnownPartyFromX500Name(x500Name)
-        proxy.startFlowDynamic(AssetIssueFlow::class.java, "wood", 100, party)
+        proxy.startFlowDynamic(AssetIssueFlow::class.java, "BTC", 100, party)
         return """{ "":"" } """
     }
 
@@ -84,7 +84,37 @@ class Controller(rpc: NodeRPCConnection) {
     private fun assetIssueFlowStone(): String {
         val x500Name = CordaX500Name.parse("O=PartyC,L=Moscow,C=US")
         val party = proxy.wellKnownPartyFromX500Name(x500Name)
-        proxy.startFlowDynamic(AssetIssueFlow::class.java, "stone", 10, party)
+        proxy.startFlowDynamic(AssetIssueFlow::class.java, "Dollar", 10, party)
+        return """{ "":"" } """
+    }
+
+    @GetMapping(value = "/makeMatch", produces = arrayOf("text/plain"))
+    private fun match(): String {
+        val x500NameSeller = CordaX500Name.parse("O=PartyA, L=London, C=GB")
+        val sellParty = proxy.wellKnownPartyFromX500Name(x500NameSeller)
+        val x500NameBuyer = CordaX500Name.parse("O=PartyB,L=New York,C=US")
+        val ownerParty = proxy.wellKnownPartyFromX500Name(x500NameBuyer)
+        val sellOrderOwner = sellParty
+        val sellOrderSellAssetName = "BTC"
+        val sellOrderSellAssetQty = 100
+        val sellOrderBuyAssetName = "Dollar"
+        val sellOrderBuyAssetQty = 10
+        val buyOrderOwner = ownerParty
+        val buyOrderSellAssetName = "Dollar"
+        val buyOrderSellAssetQty = 10
+        val buyOrderBuyAssetName = "BTC"
+        val buyOrderBuyAssetQty = 100
+        proxy.startFlowDynamic(SellToBuyMatcherFlow::class.java,
+                sellOrderOwner,
+                sellOrderSellAssetName,
+                sellOrderSellAssetQty,
+                sellOrderBuyAssetName,
+                sellOrderBuyAssetQty,
+                buyOrderOwner,
+                buyOrderSellAssetName,
+                buyOrderSellAssetQty,
+                buyOrderBuyAssetName,
+                buyOrderBuyAssetQty)
         return """{ "":"" } """
     }
 
@@ -98,7 +128,7 @@ class Controller(rpc: NodeRPCConnection) {
     private fun sellOrderIssueFlowWood(): String {
         val x500Name = CordaX500Name.parse("O=PartyC,L=Moscow,C=US")
         val party = proxy.wellKnownPartyFromX500Name(x500Name)
-        proxy.startFlowDynamic(SellOrderIssueFlow::class.java, "wood", 100, "stone", 10, party)
+        proxy.startFlowDynamic(SellOrderIssueFlow::class.java, "BTC", 100, "Dollar", 10, party)
         return """{ "":"" } """
     }
 
@@ -106,7 +136,7 @@ class Controller(rpc: NodeRPCConnection) {
     private fun sellOrderIssueFlowStone(): String {
         val x500Name = CordaX500Name.parse("O=PartyC,L=Moscow,C=US")
         val party = proxy.wellKnownPartyFromX500Name(x500Name)
-        proxy.startFlowDynamic(SellOrderIssueFlow::class.java, "stone", 10, "wood", 100, party)
+        proxy.startFlowDynamic(SellOrderIssueFlow::class.java, "Dollar", 10, "BTC", 100, party)
         return """{ "":"" } """
     }
 
@@ -122,7 +152,7 @@ class Controller(rpc: NodeRPCConnection) {
         val x500Name1 = CordaX500Name.parse("O=PartyB,L=New York,C=US")
         val party = proxy.wellKnownPartyFromX500Name(x500Name)
         val party1 = proxy.wellKnownPartyFromX500Name(x500Name1)
-        proxy.startFlowDynamic(SellToBuyMatcherFlow::class.java, party, "wood", 100, "stone", 10, party1, "stone", 10)
+        proxy.startFlowDynamic(SellToBuyMatcherFlow::class.java, party, "BTC", 100, "Dollar", 10, party1, "Dollar", 10)
         return """{ "":"" } """
     }
 
